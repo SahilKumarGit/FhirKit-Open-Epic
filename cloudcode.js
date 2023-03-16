@@ -4,7 +4,6 @@ import axios from 'axios'
 const fs = require('fs');
 const path = require('path');
 const request = require('request');
-import { privateKeyString } from './privateKey.js'
 
 const Request = (/** @type {any} */ options) => {
     return new Promise((resolve, reject) => {
@@ -22,6 +21,18 @@ const Request = (/** @type {any} */ options) => {
 */
 export async function run(params) {
     try {
+
+        if (!params.name || !params.name.trim()) return {
+            error: true,
+            message: 'Patient Name is required!',
+            response: {}
+        }
+
+        if (!params.birthdate || !params.birthdate.trim()) return {
+            error: true,
+            message: 'Patient Birth Date is required (Format YYYY-MM-DD)!',
+            response: {}
+        }
 
         const filePath = path.join(__dirname, 'privatekey.pem');
         console.log({ filePath })
@@ -65,8 +76,8 @@ export async function run(params) {
             },
             params: {
                 // gender: "female",
-                birthdate: "1987-09-12",
-                name: "Camila Maria Lopez"
+                birthdate: params.birthdate,
+                name: params.name
             }
         });
         console.log(patentData.data)
@@ -80,7 +91,7 @@ export async function run(params) {
         return {
             error: true,
             message: message,
-            response: error || "---"
+            response: {}
         }
     }
 }
